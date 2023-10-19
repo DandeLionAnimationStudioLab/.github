@@ -15,6 +15,7 @@ jobs:
     steps:
     - id: repository
       run: $env:REPOSITORY_NAME=${env:GITHUB_REPOSITORY}.replace(${env:GITHUB_REPOSITORY_OWNER}, "")
+      shell: powershell
 
     - uses: actions/checkout@v4
 
@@ -33,6 +34,7 @@ jobs:
         sphinx-quickstart -p $env:REPOSITORY_NAME -a $env:GITHUB_ACTOR -q .\docs
         sphinx-apidoc .\docs .\$env:REPOSITORY_NAME
         .\docs\make.bat html
+      shell: powershell
 
     - name: Run a one-line script
       run: dir .\docs\_build
