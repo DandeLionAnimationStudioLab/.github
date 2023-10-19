@@ -13,7 +13,26 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
+    - id: repository
+      run: $env:REPOSITORY_NAME=${env:GITHUB_REPOSITORY}.replace(${env:GITHUB_REPOSITORY_OWNER}, "")
 
-      - name: Run a one-line script
-        run: echo Hello from Test Organization
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 2.7
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install sphinx sphinx-rtd-theme
+
+    - name: Build
+      run: |
+        sphinx-quickstart -p $env:REPOSITORY_NAME -a $env:GITHUB_ACTOR -q .\docs
+        sphinx-apidoc .\docs .\$env:REPOSITORY_NAME
+        .\docs\make.bat html
+
+    - name: Run a one-line script
+      run: dir .\docs\_build
